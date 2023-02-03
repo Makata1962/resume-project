@@ -1,0 +1,41 @@
+.container {
+    background-image: url('../../assets/background.png');
+    background-size: cover;
+    height: 100vh;
+}
+
+.sub_container {
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.button {
+    width: 464px;
+    height: 60px;
+    padding: 18px 60px 18px 60px;
+    background-color: #1A1A1A;
+    color: #fff;
+    font-family: 'Helvetica Neue', sans-serif; 
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 24.4px;
+    border-radius: 8px;
+}
+
+
+.center_button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    position: relative;
+}
+
+.center_button img {
+    position: "absolute";
+    top: "100px";
+    right: "100px";
+}

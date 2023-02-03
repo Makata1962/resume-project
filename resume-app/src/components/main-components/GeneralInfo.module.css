@@ -1,0 +1,60 @@
+main {
+  width: 1098px;
+  background-color: hsl(0, 5%, 96%);
+}
+small {
+  font-family: "Helvetica Neue";
+  font-style: normal;
+  font-weight: 300;
+  font-size: 14px;
+  line-height: 21px;
+}
+.container {
+  padding: 47px 150px;
+  font-family: "Helvetica Neue";
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header p {
+  color: #1a1a1a;
+  font-style: normal;
+}
+
+.page_name {
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 29.3px;
+}
+
+.pagination {
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 24px;
+}
+.name_container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.name_container label {
+  display: flex;
+  flex-direction: column;
+  font-weight: bold;
+}
+
+.name_container input[type="text"] {
+  width: 371px;
+  padding: 10px;
+  box-sizing: border-box;
+  height: 48px;
+  border-radius: 4px;
+  float: left;
+}
+.resume_container {
+  width: 822px;
+}
