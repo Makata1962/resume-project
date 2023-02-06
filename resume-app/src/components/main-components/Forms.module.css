@@ -19,6 +19,7 @@ small {
   font-size: 14px;
   line-height: 21px;
 }
+
 .underlined {
   text-decoration: underline;
   border: 0.1px solid #1a1a1a;

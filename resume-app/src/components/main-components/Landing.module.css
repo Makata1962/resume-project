@@ -1,14 +1,28 @@
 .container {
     background-image: url('../../assets/background.png');
     background-size: cover;
-    height: 100vh;
+    height: 100vh; 
+    width: 1980px; 
+    position: relative;
+  }
+
+.container img {
+    width: 236px;
+    height: 38px;
+    margin-top: 25px;
+    margin-left: 70px;
 }
 
-.sub_container {
-    
+.sub_container { 
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+
+.sub_container img {
+    width: 299px;
+    height: 299px;
 }
 
 
@@ -23,19 +37,20 @@
     font-size: 20px;
     line-height: 24.4px;
     border-radius: 8px;
-}
+  
+  }
 
+  
 
 .center_button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    position: relative;
-}
-
-.center_button img {
-    position: "absolute";
-    top: "100px";
-    right: "100px";
-}
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  }
+  
+  .center_button img {
+    position:absolute;
+    right: -200px;
+    top:-20px
+  }

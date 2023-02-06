@@ -8,6 +8,7 @@ const Landing = () => {
     <main className={classes.container}>
       <img src={redberryImg} alt="redberry-logo" />
       <div className={classes.sub_container}>
+      <hr className={classes.underline} /> 
         <div className={classes.center_button}>
           <Link to="/general-info">
             <button className={classes.button}>რეზიუმეს დამატება</button>
@@ -20,3 +21,6 @@ const Landing = () => {
 };
 
 export default Landing;
+
+
+// underline should be displayed later

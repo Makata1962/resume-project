@@ -1,12 +1,13 @@
 import classes from "./Forms.module.css";
 import Resume from "./Resume";
-import { useReducer } from "react";
+import { useReducer, useState } from "react";
 
 const initialState = {
   name: "",
   surname: "",
   email: "",
   mobile: "",
+  about: "",
 };
 
 const formReducer = (state, action) => {
@@ -19,6 +20,8 @@ const formReducer = (state, action) => {
       return { ...state, email: action.payload };
     case "updateMobile":
       return { ...state, mobile: action.payload };
+    case "updateAbout":
+      return { ...state, about: action.payload };
     default:
       return state;
   }
@@ -26,6 +29,7 @@ const formReducer = (state, action) => {
 
 const Forms = () => {
   const [formState, dispatch] = useReducer(formReducer, initialState);
+  const [state, setstate] = useState([]);
 
   const nameChangeHandler = (e) => {
     dispatch({ type: "updateName", payload: e.target.value });
@@ -41,6 +45,10 @@ const Forms = () => {
 
   const mobileChangeHandler = (e) => {
     dispatch({ type: "updateMobile", payload: e.target.value });
+  };
+
+  const aboutChangeHandler = (e) => {
+    dispatch({ type: "updateAbout", payload: e.target.value });
   };
 
   return (
@@ -79,8 +87,12 @@ const Forms = () => {
             <button>ატვირთვა</button>
           </div>
           <div className={classes.about_container}>
-            <label for="about-me">ჩემს შესახებ (არასავალდებულო)</label>
-            <textarea id="about-me" />
+            <label htmlFor="about-me">ჩემს შესახებ (არასავალდებულო)</label>
+            <textarea
+              id="about-me"
+              value={formState.about}
+              onChange={aboutChangeHandler}
+            />
           </div>
           <div className={classes.email}>
             <label htmlFor="email">
@@ -117,6 +129,7 @@ const Forms = () => {
           surname={formState.surname}
           email={formState.email}
           mobile={formState.mobile}
+          about={formState.about}
         />
       </div>
     </main>
