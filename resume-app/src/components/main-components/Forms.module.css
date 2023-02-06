@@ -23,6 +23,7 @@ small {
 .underlined {
   text-decoration: underline;
   border: 0.1px solid #1a1a1a;
+  margin-bottom: 77px;
 }
 
 .container {
@@ -96,12 +97,15 @@ small {
 }
 
 .email input,
-.number input {
+.number input,
+.position input,
+.employeer input {
   width: 798px;
   height: 48px;
   border: 1px solid #bcbcbc;
   border-radius: 4px;
 }
+
 .number {
   margin-bottom: 189px;
 }
@@ -110,6 +114,7 @@ small {
   display: flex;
   justify-content: flex-end;
 }
+
 .next button {
   width: 151px;
   height: 48px;

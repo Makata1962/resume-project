@@ -1,6 +1,14 @@
 import classes from "./Resume.module.css";
 
-const Resume = ({ name, surname, email, mobile, about, experience }) => {
+const Resume = ({
+  name,
+  surname,
+  email,
+  mobile,
+  about,
+  position,
+  employeer,
+}) => {
   return (
     <main className={classes.main_container}>
       <div className={classes.personal_container}>
@@ -14,10 +22,9 @@ const Resume = ({ name, surname, email, mobile, about, experience }) => {
         <div className={classes.right_container}></div>
       </div>
       <div className={classes.experience_container}>
-        {experience && (
-          <h1 className={classes.experience_header}>გამოცდილება</h1>
-        )}
-        <p className={classes.experience_section}>{experience}</p>
+        {position && <h1 className={classes.experience_header}>გამოცდილება</h1>}
+        <p className={classes.experience_section}>{position}</p>
+        <p className={classes.experience_section}>{employeer}</p>
       </div>
     </main>
   );
