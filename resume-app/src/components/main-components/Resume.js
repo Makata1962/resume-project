@@ -10,6 +10,9 @@ const Resume = (props) => {
     position,
     employeer,
     uploading,
+    startDate,
+    endDate,
+    description,
   } = props;
 
   return (
@@ -30,6 +33,13 @@ const Resume = (props) => {
         {position && <h1 className={classes.experience_header}>გამოცდილება</h1>}
         <p className={classes.experience_section}>{position}</p>
         <p className={classes.experience_section}>{employeer}</p>
+        <div className={classes.date_section}>
+          <p>{startDate}</p>
+          <p>{endDate}</p>
+        </div>
+        <div className={classes.description_section}>
+          <p>{description}</p>
+        </div>
       </div>
     </main>
   );

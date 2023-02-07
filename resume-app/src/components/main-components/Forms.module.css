@@ -1,4 +1,4 @@
-main {
+.main {
   width: 1098px;
   background-color: hsl(0, 5%, 96%);
   display: flex;
@@ -17,6 +17,14 @@ small {
   font-style: normal;
   font-weight: 300;
   font-size: 14px;
+  line-height: 21px;
+}
+
+input,
+textarea {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
   line-height: 21px;
 }
 
@@ -53,12 +61,15 @@ small {
   font-size: 20px;
   line-height: 24px;
 }
-.name_container {
+
+.name_container,
+.date {
   display: flex;
   justify-content: space-between;
 }
 
-.name_container input[type="text"] {
+.name_container input[type="text"],
+.date input {
   width: 371px;
   padding: 10px;
   box-sizing: border-box;
@@ -110,11 +121,16 @@ small {
 
 
 
-.about_container textarea {
+.about_container textarea,
+.description_container textarea {
   width: 798px;
   height: 103px;
   border: 1px solid #bcbcbc;
   border-radius: 4px;
+}
+
+.description_container textarea {
+  height: 123px;
 }
 
 .email input,
@@ -131,12 +147,18 @@ small {
   margin-bottom: 189px;
 }
 
+.button_container {
+  display: flex;
+  justify-content: space-between;
+}
+
 .next {
   display: flex;
   justify-content: flex-end;
+
 }
 
-.next button {
+.button_container button, .next button {
   width: 151px;
   height: 48px;
   border-radius: 4px;

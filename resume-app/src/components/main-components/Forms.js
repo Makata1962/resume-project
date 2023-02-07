@@ -11,6 +11,9 @@ const initialState = {
   position: "",
   employeer: "",
   uploading: null,
+  startDate: "",
+  endDate: "",
+  description: "",
 };
 
 const formReducer = (state, action) => {
@@ -30,6 +33,12 @@ const formReducer = (state, action) => {
     case "updateEmployeer":
       return { ...state, employeer: action.payload };
     case "updateUploading":
+      return { ...state, uploading: action.payload };
+    case "updateStartDate":
+      return { ...state, uploading: action.payload };
+    case "updateEndDate":
+      return { ...state, uploading: action.payload };
+    case "updateDescription":
       return { ...state, uploading: action.payload };
     default:
       return state;
@@ -67,24 +76,40 @@ const Forms = () => {
     dispatch({ type: "updateEmployeer", payload: e.target.value });
   };
 
-  const handleUpload = (e) => {
+  const uploadChangeHandler = (e) => {
     e.preventDefault();
     dispatch({
       type: "updateUploading",
       payload: URL.createObjectURL(e.target.files[0]),
     });
-    console.log(formState.uploading);
   };
 
-  const changeForm = (e) => {
+  const startDateChangeHandler = (e) => {
+    dispatch({ type: "updatStartDate", payload: e.target.value });
+  };
+  const endDateChangeHandler = (e) => {
+    dispatch({ type: "updatEndDate", payload: e.target.value });
+  };
+
+  const descriptionChangeHandler = (e) => {
+    dispatch({ type: "updateDescription", payload: e.target.value });
+  };
+
+  const moveToNextPageHandler = (e) => {
     e.preventDefault();
     setFormPart((prevState) => {
       return prevState + 1;
     });
   };
+  const moveToPreviousPageHandler = (e) => {
+    e.preventDefault();
+    setFormPart((prevState) => {
+      return prevState - 1;
+    });
+  };
 
   return (
-    <main>
+    <main className={classes.main}>
       <div className={classes.container}>
         {formPart === 1 && (
           <Fragment>
@@ -133,7 +158,11 @@ const Forms = () => {
                 <p>პირადი ფოტოს ატვირთვა</p>
                 <label htmlFor="uploading">
                   ატვირთვა
-                  <input type="file" id="uploading" onChange={handleUpload} />
+                  <input
+                    type="file"
+                    id="uploading"
+                    onChange={uploadChangeHandler}
+                  />
                 </label>
               </div>
               <div className={classes.about_container}>
@@ -198,16 +227,45 @@ const Forms = () => {
                   <small>მინიმუმ 2 სიმბოლო</small>
                 </label>
               </div>
+              <div className={classes.date}>
+                <div>
+                  <input
+                    type="date"
+                    onChange={startDateChangeHandler}
+                    value={formState.startDate}
+                  />
+                </div>
+                <div>
+                  <input
+                    type="date"
+                    onChange={endDateChangeHandler}
+                    value={formState.endDate}
+                  />
+                </div>
+              </div>
+              <div className={classes.description_container}>
+                <label htmlFor="description">აღწერა</label>
+                <textarea
+                  id="about-me"
+                  value={formState.description}
+                  onChange={descriptionChangeHandler}
+                />
+              </div>
             </Fragment>
           )}
-          {(formPart === 1 || formPart === 2) && (
+          {formPart === 1 && (
             <div className={classes.next}>
-              <button onClick={changeForm}>შემდეგი</button>
+              <button onClick={moveToNextPageHandler}>შემდეგი</button>
             </div>
           )}
-          {formPart === 3 && (
-            <div className={classes.next}>
-              <button>დასრულება</button>
+          {(formPart === 2 || formPart === 3) && (
+            <div className={classes.button_container}>
+              <div className={classes.back}>
+                <button onClick={moveToPreviousPageHandler}>უკან</button>
+              </div>
+              <div className={classes.next}>
+                <button onClick={moveToNextPageHandler}>შემდეგი</button>
+              </div>
             </div>
           )}
         </form>
@@ -222,6 +280,9 @@ const Forms = () => {
           position={formState.position}
           employeer={formState.employeer}
           uploading={formState.uploading}
+          startDate={formState.startDate}
+          endDate={formState.endDate}
+          description={formState.description}
         />
       </div>
     </main>
