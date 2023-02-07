@@ -10,6 +10,7 @@ const initialState = {
   about: "",
   position: "",
   employeer: "",
+  uploading: null,
 };
 
 const formReducer = (state, action) => {
@@ -28,6 +29,8 @@ const formReducer = (state, action) => {
       return { ...state, position: action.payload };
     case "updateEmployeer":
       return { ...state, employeer: action.payload };
+    case "updateUploading":
+      return { ...state, uploading: action.payload };
     default:
       return state;
   }
@@ -62,6 +65,15 @@ const Forms = () => {
   };
   const employeerChangeHandler = (e) => {
     dispatch({ type: "updateEmployeer", payload: e.target.value });
+  };
+
+  const handleUpload = (e) => {
+    e.preventDefault();
+    dispatch({
+      type: "updateUploading",
+      payload: URL.createObjectURL(e.target.files[0]),
+    });
+    console.log(formState.uploading);
   };
 
   const changeForm = (e) => {
@@ -119,7 +131,10 @@ const Forms = () => {
               </div>
               <div className={classes.uploading_container}>
                 <p>პირადი ფოტოს ატვირთვა</p>
-                <button>ატვირთვა</button>
+                <label htmlFor="uploading">
+                  ატვირთვა
+                  <input type="file" id="uploading" onChange={handleUpload} />
+                </label>
               </div>
               <div className={classes.about_container}>
                 <label htmlFor="about-me">ჩემს შესახებ (არასავალდებულო)</label>
@@ -206,6 +221,7 @@ const Forms = () => {
           about={formState.about}
           position={formState.position}
           employeer={formState.employeer}
+          uploading={formState.uploading}
         />
       </div>
     </main>
