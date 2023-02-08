@@ -54,7 +54,8 @@
   margin-bottom: 15px;
 }
 
-.about_section, .description_section {
+.about_section,
+.description_section {
   font-weight: 400;
   font-size: 16px;
   line-height: 22px;
@@ -63,9 +64,7 @@
   height: auto;
 }
 
-
-
-img {
+.right_container img {
   width: 246px;
   height: 246px;
   border-radius: 133px;

@@ -2,18 +2,22 @@ import classes from "./Forms.module.css";
 import Resume from "./Resume";
 import { Fragment, useReducer, useState } from "react";
 
+const initialExperience = {
+  position: "",
+  employeer: "",
+  startDate: new Date().toISOString(),
+  endDate: new Date().toISOString(),
+  description: "",
+};
+
 const initialState = {
   name: "",
   surname: "",
+  uploading: null,
   email: "",
   mobile: "",
   about: "",
-  position: "",
-  employeer: "",
-  uploading: null,
-  startDate: "",
-  endDate: "",
-  description: "",
+  experiences: [initialExperience],
 };
 
 const formReducer = (state, action) => {
@@ -22,24 +26,28 @@ const formReducer = (state, action) => {
       return { ...state, name: action.payload };
     case "updateSurname":
       return { ...state, surname: action.payload };
+    case "updateUploading":
+      return { ...state, uploading: action.payload };
     case "updateEmail":
       return { ...state, email: action.payload };
     case "updateMobile":
       return { ...state, mobile: action.payload };
     case "updateAbout":
       return { ...state, about: action.payload };
-    case "updatePosition":
-      return { ...state, position: action.payload };
-    case "updateEmployeer":
-      return { ...state, employeer: action.payload };
-    case "updateUploading":
-      return { ...state, uploading: action.payload };
-    case "updateStartDate":
-      return { ...state, uploading: action.payload };
-    case "updateEndDate":
-      return { ...state, uploading: action.payload };
-    case "updateDescription":
-      return { ...state, uploading: action.payload };
+    case "updateExperience":
+      return {
+        ...state,
+        experiences: state.experiences.map((exp, i) =>
+          i === action.payload.index
+            ? { ...exp, ...action.payload.experience }
+            : exp
+        ),
+      };
+    case "addExperience":
+      return {
+        ...state,
+        experiences: [...state.experiences, action.payload],
+      };
     default:
       return state;
   }
@@ -48,6 +56,8 @@ const formReducer = (state, action) => {
 const Forms = () => {
   const [formState, dispatch] = useReducer(formReducer, initialState);
   const [formPart, setFormPart] = useState(1);
+  const [showStartDate, setStartShowDate] = useState(false);
+  const [showEndDate, setEndShowDate] = useState(false);
 
   const nameChangeHandler = (e) => {
     dispatch({ type: "updateName", payload: e.target.value });
@@ -55,6 +65,14 @@ const Forms = () => {
 
   const surnameChangeHandler = (e) => {
     dispatch({ type: "updateSurname", payload: e.target.value });
+  };
+
+  const uploadChangeHandler = (e) => {
+    e.preventDefault();
+    dispatch({
+      type: "updateUploading",
+      payload: URL.createObjectURL(e.target.files[0]),
+    });
   };
 
   const emailChangeHandler = (e) => {
@@ -69,30 +87,59 @@ const Forms = () => {
     dispatch({ type: "updateAbout", payload: e.target.value });
   };
 
-  const positionChangeHandler = (e) => {
-    dispatch({ type: "updatePosition", payload: e.target.value });
-  };
-  const employeerChangeHandler = (e) => {
-    dispatch({ type: "updateEmployeer", payload: e.target.value });
-  };
+  const updateExperience = (index, experience) => ({
+    type: "updateExperience",
+    payload: { index, experience },
+  });
 
-  const uploadChangeHandler = (e) => {
-    e.preventDefault();
+  const positionChangeHandler = (index) => (e) => {
     dispatch({
-      type: "updateUploading",
-      payload: URL.createObjectURL(e.target.files[0]),
+      type: "updateExperience",
+      payload: { index, experience: { position: e.target.value } },
     });
   };
 
-  const startDateChangeHandler = (e) => {
-    dispatch({ type: "updatStartDate", payload: e.target.value });
-  };
-  const endDateChangeHandler = (e) => {
-    dispatch({ type: "updatEndDate", payload: e.target.value });
+  const employeerChangeHandler = (index) => (e) => {
+    dispatch({
+      type: "updateExperience",
+      payload: { index, experience: { employeer: e.target.value } },
+    });
   };
 
-  const descriptionChangeHandler = (e) => {
-    dispatch({ type: "updateDescription", payload: e.target.value });
+  const startDateChangeHandler = (index) => (e) => {
+    dispatch(
+      updateExperience(index, {
+        ...formState.experiences[index],
+        startDate: e.target.value,
+      })
+    );
+    setStartShowDate(true);
+  };
+
+  const endDateChangeHandler = (index) => (e) => {
+    dispatch(
+      updateExperience(index, {
+        ...formState.experiences[index],
+        endDate: e.target.value,
+      })
+    );
+    setEndShowDate(true);
+  };
+
+  const descriptionChangeHandler = (index) => (e) => {
+    dispatch(
+      updateExperience(index, {
+        ...formState.experiences[index],
+        description: e.target.value,
+      })
+    );
+  };
+
+  const addExperienceHandler = () => {
+    dispatch({
+      type: "addExperience",
+      payload: initialExperience,
+    });
   };
 
   const moveToNextPageHandler = (e) => {
@@ -137,6 +184,7 @@ const Forms = () => {
                   სახელი
                   <input
                     type="text"
+                    placeholder="სახელი"
                     id="name"
                     value={formState.name}
                     onChange={nameChangeHandler}
@@ -147,6 +195,7 @@ const Forms = () => {
                   გვარი
                   <input
                     type="text"
+                    placeholder="გვარი"
                     id="surname"
                     value={formState.surname}
                     onChange={surnameChangeHandler}
@@ -169,6 +218,7 @@ const Forms = () => {
                 <label htmlFor="about-me">ჩემს შესახებ (არასავალდებულო)</label>
                 <textarea
                   id="about-me"
+                  placeholder="ზოგადი ინფორმაცია შენს შესახებ"
                   value={formState.about}
                   onChange={aboutChangeHandler}
                 />
@@ -178,6 +228,7 @@ const Forms = () => {
                   ელ.ფოსტა
                   <input
                     type="text"
+                    placeholder="მაგ: namesurname@redberry.ge"
                     id="email"
                     value={formState.email}
                     onChange={emailChangeHandler}
@@ -190,6 +241,7 @@ const Forms = () => {
                   მობილურის ნომერი
                   <input
                     type="number"
+                    placeholder="მაგ: +995 551 12 34 56"
                     id="mobile"
                     value={formState.mobile}
                     onChange={mobileChangeHandler}
@@ -201,58 +253,70 @@ const Forms = () => {
               </div>
             </Fragment>
           )}
+
+          {formPart === 2 &&
+            formState.experiences.map((experience, index) => (
+              <Fragment key={index}>
+                <div className={classes.position}>
+                  <label htmlFor="position">
+                    თანამდებობა
+                    <input
+                      type="text"
+                      placeholder="დეველოპერი, დიზაინერი, ა.შ."
+                      id="position"
+                      value={experience.position}
+                      onChange={positionChangeHandler(index)}
+                    />
+                    <small>მინიმუმ 2 სიმბოლო</small>
+                  </label>
+                </div>
+                <div className={classes.employeer}>
+                  <label htmlFor="employeer">
+                    დამსაქმებელი
+                    <input
+                      type="text"
+                      placeholder="დამსაქმებელი"
+                      id="employeer"
+                      value={experience.employeer}
+                      onChange={employeerChangeHandler(index)}
+                    />
+                    <small>მინიმუმ 2 სიმბოლო</small>
+                  </label>
+                </div>
+                <div className={classes.date}>
+                  <div>
+                    <input
+                      type="date"
+                      onChange={startDateChangeHandler(index)}
+                      value={experience.startDate}
+                    />
+                  </div>
+                  <div>
+                    <input
+                      type="date"
+                      onChange={endDateChangeHandler(index)}
+                      value={experience.endDate}
+                    />
+                  </div>
+                </div>
+                <div className={classes.description_container}>
+                  <label htmlFor="description">აღწერა</label>
+                  <textarea
+                    id="description"
+                    placeholder="როლი თანამდებობაზე და ზოგადი აღწერა"
+                    value={experience.description}
+                    onChange={descriptionChangeHandler(index)}
+                  />
+                </div>
+              </Fragment>
+            ))}
+
           {formPart === 2 && (
-            <Fragment>
-              <div className={classes.position}>
-                <label htmlFor="position">
-                  თანამდებობა
-                  <input
-                    type="text"
-                    id="position"
-                    value={formState.position}
-                    onChange={positionChangeHandler}
-                  />
-                  <small>მინიმუმ 2 სიმბოლო</small>
-                </label>
-              </div>
-              <div className={classes.employeer}>
-                <label htmlFor="employeer">
-                  დამსაქმებელი
-                  <input
-                    type="text"
-                    id="employeer"
-                    value={formState.employeer}
-                    onChange={employeerChangeHandler}
-                  />
-                  <small>მინიმუმ 2 სიმბოლო</small>
-                </label>
-              </div>
-              <div className={classes.date}>
-                <div>
-                  <input
-                    type="date"
-                    onChange={startDateChangeHandler}
-                    value={formState.startDate}
-                  />
-                </div>
-                <div>
-                  <input
-                    type="date"
-                    onChange={endDateChangeHandler}
-                    value={formState.endDate}
-                  />
-                </div>
-              </div>
-              <div className={classes.description_container}>
-                <label htmlFor="description">აღწერა</label>
-                <textarea
-                  id="about-me"
-                  value={formState.description}
-                  onChange={descriptionChangeHandler}
-                />
-              </div>
-            </Fragment>
+            <button type="button" onClick={addExperienceHandler}>
+              Add one more form
+            </button>
           )}
+
           {formPart === 1 && (
             <div className={classes.next}>
               <button onClick={moveToNextPageHandler}>შემდეგი</button>
@@ -274,15 +338,13 @@ const Forms = () => {
         <Resume
           name={formState.name}
           surname={formState.surname}
+          uploading={formState.uploading}
           email={formState.email}
           mobile={formState.mobile}
           about={formState.about}
-          position={formState.position}
-          employeer={formState.employeer}
-          uploading={formState.uploading}
-          startDate={formState.startDate}
-          endDate={formState.endDate}
-          description={formState.description}
+          showStartDate={formState.showStartDate}
+          showEndDate={formState.showEndDate}
+          formState={formState}
         />
       </div>
     </main>

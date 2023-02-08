@@ -1,5 +1,5 @@
+import Forms from "./Forms";
 import classes from "./Resume.module.css";
-
 const Resume = (props) => {
   const {
     name,
@@ -10,9 +10,9 @@ const Resume = (props) => {
     position,
     employeer,
     uploading,
-    startDate,
-    endDate,
-    description,
+    showStartDate,
+    showEndDate,
+    formState,
   } = props;
 
   return (
@@ -31,14 +31,14 @@ const Resume = (props) => {
       </div>
       <div className={classes.experience_container}>
         {position && <h1 className={classes.experience_header}>გამოცდილება</h1>}
-        <p className={classes.experience_section}>{position}</p>
+        <p className={classes.experience_section}>
+        </p>
         <p className={classes.experience_section}>{employeer}</p>
         <div className={classes.date_section}>
-          <p>{startDate}</p>
-          <p>{endDate}</p>
+          {showStartDate && <p>{formState}</p>}
+          {showEndDate && <p></p>}
         </div>
         <div className={classes.description_section}>
-          <p>{description}</p>
         </div>
       </div>
     </main>
