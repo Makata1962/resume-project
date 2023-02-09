@@ -10,6 +10,13 @@ const initialExperience = {
   description: "",
 };
 
+const initialEducation = {
+  college: "",
+  degree: "",
+  endDate: new Date().toISOString(),
+  description: "",
+};
+
 const initialState = {
   name: "",
   surname: "",
@@ -18,6 +25,7 @@ const initialState = {
   mobile: "",
   about: "",
   experiences: [initialExperience],
+  education: [initialEducation],
 };
 
 const formReducer = (state, action) => {
@@ -43,15 +51,45 @@ const formReducer = (state, action) => {
             : exp
         ),
       };
+    case "updateEducation":
+      return {
+        ...state,
+        education: state.education.map((edu, i) =>
+          i === action.payload.index
+            ? { ...edu, ...action.payload.education }
+            : edu
+        ),
+      };
     case "addExperience":
       return {
         ...state,
         experiences: [...state.experiences, action.payload],
       };
+    case "addEducation":
+      return {
+        ...state,
+        education: [...state.education, action.payload],
+      };
     default:
       return state;
   }
 };
+
+const options = [
+  { value: "", label: "აირჩიეთ ხარისხი" },
+  { value: "საშუალო სკოლის დიპლომი", label: "საშუალო სკოლის დიპლომი" },
+  {
+    value: "ზოგადსაგანმანათლებლო დიპლომი",
+    label: "ზოგადსაგანმანათლებლო დიპლომი",
+  },
+  { value: "ბაკალავრი", label: "ბაკალავრი" },
+  { value: "მაგისტრი", label: "მაგისტრი" },
+  { value: "დოქტორი", label: "დოქტორი" },
+  { value: "ასოცირებული ხარისხი", label: "ასოცირებული ხარისხი" },
+  { value: "სტუდენტი", label: "სტუდენტი" },
+  { value: "კოლეჯი (ხარისხის გარეშე)", label: "კოლეჯი (ხარისხის გარეშე)" },
+  { value: "სხვა", label: "სხვა" },
+];
 
 const Forms = () => {
   const [formState, dispatch] = useReducer(formReducer, initialState);
@@ -91,6 +129,10 @@ const Forms = () => {
     type: "updateExperience",
     payload: { index, experience },
   });
+  const updateEducation = (index, education) => ({
+    type: "updateEducation",
+    payload: { index, education },
+  });
 
   const positionChangeHandler = (index) => (e) => {
     dispatch({
@@ -98,11 +140,24 @@ const Forms = () => {
       payload: { index, experience: { position: e.target.value } },
     });
   };
+  const collegeChangeHandler = (index) => (e) => {
+    dispatch({
+      type: "updateEducation",
+      payload: { index, education: { college: e.target.value } },
+    });
+  };
 
   const employeerChangeHandler = (index) => (e) => {
     dispatch({
       type: "updateExperience",
       payload: { index, experience: { employeer: e.target.value } },
+    });
+  };
+
+  const degreeChangeHandler = (index) => (e) => {
+    dispatch({
+      type: "updateEducation",
+      payload: { index, education: { degree: e.target.value } },
     });
   };
 
@@ -126,10 +181,29 @@ const Forms = () => {
     setEndShowDate(true);
   };
 
+  const uniEndDateChangeHandler = (index) => (e) => {
+    dispatch(
+      updateEducation(index, {
+        ...formState.education[index],
+        endDate: e.target.value,
+      })
+    );
+    // setEndShowDate(true);
+  };
+
   const descriptionChangeHandler = (index) => (e) => {
     dispatch(
       updateExperience(index, {
         ...formState.experiences[index],
+        description: e.target.value,
+      })
+    );
+  };
+
+  const eduDescriptionChangeHandler = (index) => (e) => {
+    dispatch(
+      updateEducation(index, {
+        ...formState.education[index],
         description: e.target.value,
       })
     );
@@ -140,6 +214,18 @@ const Forms = () => {
       type: "addExperience",
       payload: initialExperience,
     });
+
+    // setStartShowDate(false);
+    // setEndShowDate(false);
+  };
+  const addEducationHandler = () => {
+    dispatch({
+      type: "addEducation",
+      payload: initialEducation,
+    });
+
+    // setStartShowDate(false);
+    // setEndShowDate(false);
   };
 
   const moveToNextPageHandler = (e) => {
@@ -154,6 +240,8 @@ const Forms = () => {
       return prevState - 1;
     });
   };
+
+  const sendDataHandler = (e) => {};
 
   return (
     <main className={classes.main}>
@@ -310,19 +398,80 @@ const Forms = () => {
                 </div>
               </Fragment>
             ))}
+          {formPart === 3 &&
+            formState.education.map((education, index) => (
+              <Fragment key={index}>
+                <div className={classes.position}>
+                  <label htmlFor="college">
+                    სასწავლებელი
+                    <input
+                      type="text"
+                      placeholder="სასწავლებელი"
+                      id="college"
+                      value={education.college}
+                      onChange={collegeChangeHandler(index)}
+                    />
+                    <small>მინიმუმ 2 სიმბოლო</small>
+                  </label>
+                </div>
+                <div className={classes.date}>
+                  <div>
+                    <label>ხარისხი</label>
+                    <select
+                      value={education.degree}
+                      onChange={degreeChangeHandler(index)}
+                    >
+                      {options.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <input
+                      type="date"
+                      onChange={uniEndDateChangeHandler(index)}
+                      value={education.endDate}
+                    />
+                  </div>
+                </div>
+                <div className={classes.description_container}>
+                  <label htmlFor="description">აღწერა</label>
+                  <textarea
+                    id="description"
+                    placeholder="განათლების აღწერა"
+                    value={education.description}
+                    onChange={eduDescriptionChangeHandler(index)}
+                  />
+                </div>
+              </Fragment>
+            ))}
 
           {formPart === 2 && (
-            <button type="button" onClick={addExperienceHandler}>
-              Add one more form
+            <button
+              type="button"
+              className={classes.addExperienceButton}
+              onClick={addExperienceHandler}
+            >
+              მეტი გამოცდილების დამატება
             </button>
           )}
-
+          {formPart === 3 && (
+            <button
+              type="button"
+              className={classes.addExperienceButton}
+              onClick={addEducationHandler}
+            >
+              სხვა სასწავლებლის დამატება
+            </button>
+          )}
           {formPart === 1 && (
             <div className={classes.next}>
               <button onClick={moveToNextPageHandler}>შემდეგი</button>
             </div>
           )}
-          {(formPart === 2 || formPart === 3) && (
+          {formPart === 2 && (
             <div className={classes.button_container}>
               <div className={classes.back}>
                 <button onClick={moveToPreviousPageHandler}>უკან</button>
@@ -332,19 +481,23 @@ const Forms = () => {
               </div>
             </div>
           )}
+          {formPart === 3 && (
+            <div className={classes.button_container}>
+              <div className={classes.back}>
+                <button onClick={moveToPreviousPageHandler}>უკან</button>
+              </div>
+              <div className={classes.next}>
+                <button onSubmit={sendDataHandler}>დასრულება</button>
+              </div>
+            </div>
+          )}
         </form>
       </div>
       <div className={classes.resume_container}>
         <Resume
-          name={formState.name}
-          surname={formState.surname}
-          uploading={formState.uploading}
-          email={formState.email}
-          mobile={formState.mobile}
-          about={formState.about}
-          showStartDate={formState.showStartDate}
-          showEndDate={formState.showEndDate}
           formState={formState}
+          showStartDate={showStartDate}
+          showEndDate={showEndDate}
         />
       </div>
     </main>

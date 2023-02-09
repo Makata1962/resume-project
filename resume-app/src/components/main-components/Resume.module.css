@@ -54,8 +54,7 @@
   margin-bottom: 15px;
 }
 
-.about_section,
-.description_section {
+.about_section {
   font-weight: 400;
   font-size: 16px;
   line-height: 22px;
@@ -68,4 +67,21 @@
   width: 246px;
   height: 246px;
   border-radius: 133px;
+}
+
+.date_section p {
+  font-style: italic;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 19px;
+  color: #919191;
+}
+
+.description_section {
+  max-width: 662px;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 22px;
+  color: #000;
+  height: auto;
 }
