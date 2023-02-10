@@ -1,6 +1,8 @@
 import classes from "./Forms.module.css";
 import Resume from "./Resume";
 import Button from "../shared-components/Button";
+import FormInput from "../shared-components/FormInput";
+import FormTextArea from "../shared-components/FormTextArea";
 import { Fragment, useReducer, useState, useEffect } from "react";
 import { initialExperience, initialEducation } from "../helper/initialState";
 
@@ -275,43 +277,42 @@ const Forms = () => {
           {formPart === 1 && (
             <Fragment>
               <div className={classes.name_container}>
-                <label htmlFor="name">
-                  სახელი
-                  <input
+                <div>
+                  <FormInput
+                    label="სახელი"
                     type="text"
+                    required
                     placeholder="სახელი"
                     id="name"
                     value={formState.name}
                     onChange={nameChangeHandler}
                   />
                   <small>მინიმუმ 2 ასო, ქართული ასოები</small>
-                </label>
-                <label htmlFor="surname">
-                  გვარი
-                  <input
+                </div>
+                <div>
+                  <FormInput
                     type="text"
+                    label="გვარი"
                     placeholder="გვარი"
                     id="surname"
                     value={formState.surname}
                     onChange={surnameChangeHandler}
                   />
                   <small>მინიმუმ 2 ასო, ქართული ასოები</small>
-                </label>
+                </div>
               </div>
               <div className={classes.uploading_container}>
                 <p>პირადი ფოტოს ატვირთვა</p>
-                <label htmlFor="uploading">
-                  ატვირთვა
-                  <input
-                    type="file"
-                    id="uploading"
-                    onChange={uploadChangeHandler}
-                  />
-                </label>
+                <FormInput
+                  label="ატვირთვა"
+                  type="file"
+                  id="uploading"
+                  onChange={uploadChangeHandler}
+                />
               </div>
               <div className={classes.about_container}>
-                <label htmlFor="about-me">ჩემს შესახებ (არასავალდებულო)</label>
-                <textarea
+                <FormTextArea
+                  label="ჩემს შესახებ (არასავალდებულო)"
                   id="about-me"
                   placeholder="ზოგადი ინფორმაცია შენს შესახებ"
                   value={formState.about}
@@ -319,32 +320,28 @@ const Forms = () => {
                 />
               </div>
               <div className={classes.email}>
-                <label htmlFor="email">
-                  ელ.ფოსტა
-                  <input
-                    type="text"
-                    placeholder="მაგ: namesurname@redberry.ge"
-                    id="email"
-                    value={formState.email}
-                    onChange={emailChangeHandler}
-                  />
-                  <small>უნდა მთავრდებოდეს @redberry.ge-ით</small>
-                </label>
+                <FormInput
+                  label="ელ.ფოსტა"
+                  type="text"
+                  placeholder="მაგ: namesurname@redberry.ge"
+                  id="email"
+                  value={formState.email}
+                  onChange={emailChangeHandler}
+                />
+                <small>უნდა მთავრდებოდეს @redberry.ge-ით</small>
               </div>
               <div className={classes.number}>
-                <label htmlFor="mobile">
-                  მობილურის ნომერი
-                  <input
-                    type="text"
-                    placeholder="მაგ: +995 551 12 34 56"
-                    id="mobile"
-                    value={formState.mobile}
-                    onChange={mobileChangeHandler}
-                  />
-                  <small>
-                    უნდა აკმაყოფილებდეს ქართული მობილური ნომრის ფორმატს
-                  </small>
-                </label>
+                <FormInput
+                  label="მობილურის ნომერი"
+                  type="text"
+                  placeholder="მაგ: +995 551 12 34 56"
+                  id="mobile"
+                  value={formState.mobile}
+                  onChange={mobileChangeHandler}
+                />
+                <small>
+                  უნდა აკმაყოფილებდეს ქართული მობილური ნომრის ფორმატს
+                </small>
               </div>
             </Fragment>
           )}
@@ -353,41 +350,39 @@ const Forms = () => {
             formState.experiences.map((experience, index) => (
               <Fragment key={index}>
                 <div className={classes.position}>
-                  <label htmlFor="position">
-                    თანამდებობა
-                    <input
-                      type="text"
-                      placeholder="დეველოპერი, დიზაინერი, ა.შ."
-                      id="position"
-                      value={experience.position}
-                      onChange={positionChangeHandler(index)}
-                    />
-                    <small>მინიმუმ 2 სიმბოლო</small>
-                  </label>
+                  <FormInput
+                    label="თანამდებობა"
+                    type="text"
+                    placeholder="დეველოპერი, დიზაინერი, ა.შ."
+                    id="position"
+                    value={experience.position}
+                    onChange={positionChangeHandler(index)}
+                  />
+                  <small>მინიმუმ 2 სიმბოლო</small>
                 </div>
                 <div className={classes.employeer}>
-                  <label htmlFor="employeer">
-                    დამსაქმებელი
-                    <input
-                      type="text"
-                      placeholder="დამსაქმებელი"
-                      id="employeer"
-                      value={experience.employeer}
-                      onChange={employeerChangeHandler(index)}
-                    />
-                    <small>მინიმუმ 2 სიმბოლო</small>
-                  </label>
+                  <FormInput
+                    label="დამსაქმებელი"
+                    type="text"
+                    placeholder="დამსაქმებელი"
+                    id="employeer"
+                    value={experience.employeer}
+                    onChange={employeerChangeHandler(index)}
+                  />
+                  <small>მინიმუმ 2 სიმბოლო</small>
                 </div>
                 <div className={classes.date}>
                   <div>
-                    <input
+                    <FormInput
+                      label="დაწყების რიცხვი"
                       type="date"
                       onChange={startDateChangeHandler(index)}
                       value={experience.startDate}
                     />
                   </div>
                   <div>
-                    <input
+                    <FormInput
+                      label="დამთავრების რიცხვი"
                       type="date"
                       onChange={endDateChangeHandler(index)}
                       value={experience.endDate}
@@ -395,8 +390,8 @@ const Forms = () => {
                   </div>
                 </div>
                 <div className={classes.description_container}>
-                  <label htmlFor="description">აღწერა</label>
-                  <textarea
+                  <FormTextArea
+                    label="description"
                     id="description"
                     placeholder="როლი თანამდებობაზე და ზოგადი აღწერა"
                     value={experience.description}
@@ -409,17 +404,15 @@ const Forms = () => {
             formState.education.map((education, index) => (
               <Fragment key={index}>
                 <div className={classes.position}>
-                  <label htmlFor="college">
-                    სასწავლებელი
-                    <input
-                      type="text"
-                      placeholder="სასწავლებელი"
-                      id="college"
-                      value={education.college}
-                      onChange={collegeChangeHandler(index)}
-                    />
-                    <small>მინიმუმ 2 სიმბოლო</small>
-                  </label>
+                  <FormInput
+                    label="სასწავლებელი"
+                    type="text"
+                    placeholder="სასწავლებელი"
+                    id="college"
+                    value={education.college}
+                    onChange={collegeChangeHandler(index)}
+                  />
+                  <small>მინიმუმ 2 სიმბოლო</small>
                 </div>
                 <div className={classes.date}>
                   <div>
@@ -436,7 +429,8 @@ const Forms = () => {
                     </select>
                   </div>
                   <div>
-                    <input
+                    <FormInput
+                      label="დამთავრების რიცხვი"
                       type="date"
                       onChange={uniEndDateChangeHandler(index)}
                       value={education.endDate}
@@ -444,8 +438,8 @@ const Forms = () => {
                   </div>
                 </div>
                 <div className={classes.description_container}>
-                  <label htmlFor="description">აღწერა</label>
-                  <textarea
+                  <FormTextArea
+                    label="აღწერა"
                     id="description"
                     placeholder="განათლების აღწერა"
                     value={education.description}
@@ -454,6 +448,18 @@ const Forms = () => {
                 </div>
               </Fragment>
             ))}
+
+          {formPart === 1 && (
+            <div className={classes.next_button_container}>
+              <Button
+                type="button"
+                styling="next"
+                onClickHanlder={moveToNextPageHandler}
+              >
+                შემდეგი
+              </Button>
+            </div>
+          )}
 
           {formPart === 2 && (
             <Button
@@ -472,17 +478,6 @@ const Forms = () => {
             >
               სხვა სასწავლებლის დამატება
             </Button>
-          )}
-          {formPart === 1 && (
-            <div className={classes.next_button_container}>
-              <Button
-                type="button"
-                styling="next"
-                onClickHanlder={moveToNextPageHandler}
-              >
-                შემდეგი
-              </Button>
-            </div>
           )}
           {formPart === 2 && (
             <div className={classes.button_container}>
