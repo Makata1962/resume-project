@@ -1,0 +1,24 @@
+.next,
+.back {
+  width: 151px;
+  height: 48px;
+  border-radius: 4px;
+  background-color: #6b40e3;
+  color: #fff;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+}
+
+.add {
+  width: 289px;
+  height: 48px;
+  font-weight: 500;
+  padding: 18px 40px;
+  gap: 20px;
+  color: #fff;
+  background-color: #62a1eb;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+}

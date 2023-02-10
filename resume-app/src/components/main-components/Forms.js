@@ -1,5 +1,6 @@
 import classes from "./Forms.module.css";
 import Resume from "./Resume";
+import Button from "../shared-components/Button";
 import { Fragment, useReducer, useState } from "react";
 
 const initialExperience = {
@@ -264,7 +265,7 @@ const Forms = () => {
             <p className={classes.underlined}></p>
           </Fragment>
         )}
-        <form>
+        <form onSubmit={sendDataHandler}>
           {formPart === 1 && (
             <Fragment>
               <div className={classes.name_container}>
@@ -449,45 +450,71 @@ const Forms = () => {
             ))}
 
           {formPart === 2 && (
-            <button
-              type="button"
-              className={classes.addExperienceButton}
-              onClick={addExperienceHandler}
+            <Button
+              buttonType="button"
+              styling="add"
+              onClickHanlder={addExperienceHandler}
             >
               მეტი გამოცდილების დამატება
-            </button>
+            </Button>
           )}
           {formPart === 3 && (
-            <button
-              type="button"
-              className={classes.addExperienceButton}
-              onClick={addEducationHandler}
+            <Button
+              buttonType="button"
+              styling="add"
+              onClickHanlder={addEducationHandler}
             >
               სხვა სასწავლებლის დამატება
-            </button>
+            </Button>
           )}
           {formPart === 1 && (
-            <div className={classes.next}>
-              <button onClick={moveToNextPageHandler}>შემდეგი</button>
+            <div className={classes.next_button_container}>
+              <Button
+                type="button"
+                styling="next"
+                onClickHanlder={moveToNextPageHandler}
+              >
+                შემდეგი
+              </Button>
             </div>
           )}
           {formPart === 2 && (
             <div className={classes.button_container}>
-              <div className={classes.back}>
-                <button onClick={moveToPreviousPageHandler}>უკან</button>
+              <div>
+                <Button
+                  styling="back"
+                  type="button"
+                  onClickHanlder={moveToPreviousPageHandler}
+                >
+                  უკან
+                </Button>
               </div>
-              <div className={classes.next}>
-                <button onClick={moveToNextPageHandler}>შემდეგი</button>
+              <div className={classes.next_button_container}>
+                <Button
+                  type="button"
+                  styling="next"
+                  onClickHanlder={moveToNextPageHandler}
+                >
+                  შემდეგი
+                </Button>
               </div>
             </div>
           )}
           {formPart === 3 && (
             <div className={classes.button_container}>
-              <div className={classes.back}>
-                <button onClick={moveToPreviousPageHandler}>უკან</button>
+              <div>
+                <Button
+                  type="button"
+                  styling="back"
+                  onClickHanlder={moveToPreviousPageHandler}
+                >
+                  უკან
+                </Button>
               </div>
-              <div className={classes.next}>
-                <button onSubmit={sendDataHandler}>დასრულება</button>
+              <div className={classes.next_button_container}>
+                <Button type="submit" styling="next">
+                  დასრულება
+                </Button>
               </div>
             </div>
           )}
