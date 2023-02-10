@@ -1,22 +1,8 @@
 import classes from "./Forms.module.css";
 import Resume from "./Resume";
 import Button from "../shared-components/Button";
-import { Fragment, useReducer, useState } from "react";
-
-const initialExperience = {
-  position: "",
-  employeer: "",
-  startDate: new Date().toISOString(),
-  endDate: new Date().toISOString(),
-  description: "",
-};
-
-const initialEducation = {
-  college: "",
-  degree: "",
-  endDate: new Date().toISOString(),
-  description: "",
-};
+import { Fragment, useReducer, useState, useEffect } from "react";
+import { initialExperience, initialEducation } from "../helper/initialState";
 
 const initialState = {
   name: "",
@@ -76,27 +62,28 @@ const formReducer = (state, action) => {
   }
 };
 
-const options = [
-  { value: "", label: "აირჩიეთ ხარისხი" },
-  { value: "საშუალო სკოლის დიპლომი", label: "საშუალო სკოლის დიპლომი" },
-  {
-    value: "ზოგადსაგანმანათლებლო დიპლომი",
-    label: "ზოგადსაგანმანათლებლო დიპლომი",
-  },
-  { value: "ბაკალავრი", label: "ბაკალავრი" },
-  { value: "მაგისტრი", label: "მაგისტრი" },
-  { value: "დოქტორი", label: "დოქტორი" },
-  { value: "ასოცირებული ხარისხი", label: "ასოცირებული ხარისხი" },
-  { value: "სტუდენტი", label: "სტუდენტი" },
-  { value: "კოლეჯი (ხარისხის გარეშე)", label: "კოლეჯი (ხარისხის გარეშე)" },
-  { value: "სხვა", label: "სხვა" },
-];
+const options = [];
 
 const Forms = () => {
   const [formState, dispatch] = useReducer(formReducer, initialState);
   const [formPart, setFormPart] = useState(1);
   const [showStartDate, setStartShowDate] = useState(false);
   const [showEndDate, setEndShowDate] = useState(false);
+
+  const [selectData, setSelectData] = useState(options);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await fetch(
+        "https://resume.redberryinternship.ge/api/degrees"
+      );
+      const data = await response.json();
+      setSelectData(data);
+    };
+    fetchData();
+  }, []);
+
+  console.log(selectData);
 
   const nameChangeHandler = (e) => {
     dispatch({ type: "updateName", payload: e.target.value });
@@ -242,7 +229,26 @@ const Forms = () => {
     });
   };
 
-  const sendDataHandler = (e) => {};
+  const submitHandler = (e) => {
+    e.preventDefault();
+    console.log(formState);
+
+    fetch("https://resume.redberryinternship.ge/api/cvs", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(formState),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
 
   return (
     <main className={classes.main}>
@@ -265,7 +271,7 @@ const Forms = () => {
             <p className={classes.underlined}></p>
           </Fragment>
         )}
-        <form onSubmit={sendDataHandler}>
+        <form onSubmit={submitHandler}>
           {formPart === 1 && (
             <Fragment>
               <div className={classes.name_container}>
@@ -329,7 +335,7 @@ const Forms = () => {
                 <label htmlFor="mobile">
                   მობილურის ნომერი
                   <input
-                    type="number"
+                    type="text"
                     placeholder="მაგ: +995 551 12 34 56"
                     id="mobile"
                     value={formState.mobile}
@@ -422,9 +428,9 @@ const Forms = () => {
                       value={education.degree}
                       onChange={degreeChangeHandler(index)}
                     >
-                      {options.map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
+                      {selectData.map((option) => (
+                        <option key={option.id} value={option.title}>
+                          {option.title}
                         </option>
                       ))}
                     </select>
