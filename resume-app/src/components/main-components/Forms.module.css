@@ -5,26 +5,11 @@
   justify-content: space-between;
 }
 
-label {
-  display: flex;
-  flex-direction: column;
-  font-weight: bold;
-  margin-bottom: 8px;
-}
-
-small {
+span {
   font-family: "Helvetica Neue";
   font-style: normal;
   font-weight: 300;
   font-size: 14px;
-  line-height: 21px;
-}
-
-input,
-textarea {
-  font-style: normal;
-  font-weight: 400;
-  font-size: 16px;
   line-height: 21px;
 }
 
@@ -68,16 +53,6 @@ textarea {
   justify-content: space-between;
 }
 
-.name_container input[type="text"],
-.date input {
-  width: 371px;
-  padding: 10px;
-  box-sizing: border-box;
-  height: 48px;
-  border-radius: 4px;
-  float: left;
-}
-
 .uploading_container {
   display: flex;
   justify-content: flex-start;
@@ -106,31 +81,6 @@ textarea {
   margin-top: 10px;
 }
 
-.uploading_container input[type="file"] {
-  width: 107px;
-  height: 27px;
-  border-radius: 4px;
-  background-color: #0e80bf;
-  color: #fff;
-  cursor: pointer;
-  position: absolute;
-  top: 0;
-  left: 0;
-  opacity: 0;
-}
-
-.about_container textarea,
-.description_container textarea {
-  width: 798px;
-  height: 103px;
-  border: 1px solid #bcbcbc;
-  border-radius: 4px;
-}
-
-.description_container textarea {
-  height: 123px;
-}
-
 .email input,
 .number input,
 .position input,
@@ -154,20 +104,6 @@ textarea {
   display: flex;
   justify-content: flex-end;
 }
-
-
-/* .addExperienceButton {
-  width: 289px;
-  height: 48px;
-  font-weight: 500;
-  padding: 18px 40px;
-  gap: 20px;
-  color: #fff;
-  background-color: #62a1eb;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-} */
 
 .resume_container {
   width: 822px;

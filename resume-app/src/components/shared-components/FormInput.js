@@ -1,12 +1,15 @@
 import classes from "./FormInput.module.css";
 
-const FormInput = ({ label, ...otherProps }) => {
+const FormInput = ({ label, styling, ...otherProps }) => {
   return (
     <div>
-      <label htmlFor={otherProps.id} className={classes.label}>
+      <label htmlFor={otherProps.id}  className={`${classes.label} ${classes[styling]}`}>
         {label}
       </label>
-      <input {...otherProps} />
+      <input
+        className={`${classes.input} ${classes[styling]}`}
+        {...otherProps}
+      />
     </div>
   );
 };

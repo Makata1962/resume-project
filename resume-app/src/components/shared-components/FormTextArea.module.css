@@ -3,30 +3,15 @@
   margin-bottom: 8px;
 }
 
-.input {
+.textarea {
   font-style: normal;
   font-weight: 400;
   font-size: 16px;
   line-height: 21px;
-  width: 371px;
-  padding: 10px;
-  box-sizing: border-box;
-  height: 48px;
+  width: 798px;
+  height: 103px;
+  border: 1px solid #bcbcbc;
   border-radius: 4px;
-  float: left;
-}
-
-input[type="file"] {
-  width: 107px;
-  height: 27px;
-  border-radius: 4px;
-  background-color: #0e80bf;
-  color: #fff;
-  cursor: pointer;
-  position: absolute;
-  top: 0;
-  left: 0;
-  opacity: 0;
 }
 
 .input.valid {

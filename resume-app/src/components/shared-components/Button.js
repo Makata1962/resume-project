@@ -7,8 +7,6 @@ const BUTTON_CLASSES = {
 };
 
 const Button = ({ children, buttonType, styling, onClickHanlder }) => {
-
-
   return (
     <button
       type={buttonType}

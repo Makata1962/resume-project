@@ -12,3 +12,5 @@ export const initialEducation = {
   endDate: new Date().toISOString(),
   description: "",
 };
+
+
