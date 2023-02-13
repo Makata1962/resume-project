@@ -5,6 +5,8 @@ import FormInput from "../shared-components/FormInput";
 import FormTextArea from "../shared-components/FormTextArea";
 import { Fragment, useReducer, useState, useEffect } from "react";
 import { initialExperience, initialEducation } from "../helper/initialState";
+import axios from "axios";
+import { convertToFile } from "../helper/helperFunctions";
 
 const initialState = {
   name: "",
@@ -552,31 +554,25 @@ const Forms = () => {
     });
   };
 
-  const convertToFile = (url, name = "profile") => {
-    return fetch(url)
-      .then((res) => res.blob())
-      .then((blob) => new File([blob], name, { type: "image/jpeg" }));
-  };
-
   const submitHandler = async (e) => {
     e.preventDefault();
     localStorage.clear();
+    setFormPart((prevState) => {
+      return prevState + 1;
+    });
 
     const fileFromURL = await convertToFile(formState.image);
     const payload = { ...formState, image: fileFromURL };
     console.log("image", fileFromURL);
     console.log("payload", payload);
-    fetch("https://resume.redberryinternship.ge/api/cvs", {
-      method: "POST",
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-      body: JSON.stringify(payload),
-      mode: "no-cors"
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
+    axios
+      .post("https://resume.redberryinternship.ge/api/cvs", payload, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((response) => {
+        console.log(response.data);
       })
       .catch((error) => {
         console.error(error);
