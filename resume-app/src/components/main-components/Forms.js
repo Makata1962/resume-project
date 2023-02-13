@@ -9,12 +9,12 @@ import { initialExperience, initialEducation } from "../helper/initialState";
 const initialState = {
   name: "",
   surname: "",
-  uploading: null,
   email: "",
-  mobile: "",
-  about: "",
+  phone_number: "",
   experiences: [initialExperience],
-  education: [initialEducation],
+  educations: [initialEducation],
+  image: null,
+  about_me: "",
 };
 
 const formReducer = (state, action) => {
@@ -24,13 +24,13 @@ const formReducer = (state, action) => {
     case "updateSurname":
       return { ...state, surname: action.payload };
     case "updateUploading":
-      return { ...state, uploading: action.payload };
+      return { ...state, image: action.payload };
     case "updateEmail":
       return { ...state, email: action.payload };
     case "updateMobile":
-      return { ...state, mobile: action.payload };
+      return { ...state, phone_number: action.payload };
     case "updateAbout":
-      return { ...state, about: action.payload };
+      return { ...state, about_me: action.payload };
     case "updateExperience":
       return {
         ...state,
@@ -43,12 +43,13 @@ const formReducer = (state, action) => {
     case "updateEducation":
       return {
         ...state,
-        education: state.education.map((edu, i) =>
+        educations: state.educations.map((edu, i) =>
           i === action.payload.index
             ? { ...edu, ...action.payload.education }
             : edu
         ),
       };
+
     case "addExperience":
       return {
         ...state,
@@ -57,8 +58,9 @@ const formReducer = (state, action) => {
     case "addEducation":
       return {
         ...state,
-        education: [...state.education, action.payload],
+        educations: [...state.educations, action.payload],
       };
+
     default:
       return state;
   }
@@ -67,16 +69,27 @@ const formReducer = (state, action) => {
 const initialValidationState = {
   name: { value: "", isValid: null },
   surname: { value: "", isValid: null },
+  image: { value: null, isValid: null },
   email: { value: "", isValid: null },
   mobile: { value: "", isValid: null },
-  position: { value: "", isValid: null },
-  employer: { value: "", isValid: null },
-  startDate: { value: "", isValid: null },
-  endDate: { value: "", isValid: null },
-  description: { value: "", isValid: null },
-  college: { value: "", isValid: null },
-  endCollegeDate: { value: "", isValid: null },
-  collegeDescription: { value: "", isValid: null },
+  about: { value: "", isValid: null },
+  experiences: [
+    {
+      position: { value: "", isValid: null },
+      employer: { value: "", isValid: null },
+      start_date: { value: "", isValid: null },
+      due_date: { value: "", isValid: null },
+      description: { value: "", isValid: null },
+    },
+  ],
+  education: [
+    {
+      institute: { value: "", isValid: null },
+      endCollegeDate: { value: "", isValid: null },
+      collegeDescription: { value: "", isValid: null },
+      degree: { value: "", isValid: null },
+    },
+  ],
 };
 
 const validationReducer = (state, action) => {
@@ -87,24 +100,31 @@ const validationReducer = (state, action) => {
       return { ...state, surname: action.payload };
     case "updateEmailValidation":
       return { ...state, email: action.payload };
+    case "updateImageValidation":
+      return { ...state, image: action.payload };
     case "updateMobileValidation":
       return { ...state, mobile: action.payload };
-    case "updatePositionValidation":
-      return { ...state, position: action.payload };
-    case "updateEmployerValidation":
-      return { ...state, employer: action.payload };
-    case "updateStartDateValidation":
-      return { ...state, startDate: action.payload };
-    case "updateEndDateValidation":
-      return { ...state, endDate: action.payload };
-    case "updateDescriptionValidation":
-      return { ...state, description: action.payload };
-    case "updateCollegeValidation":
-      return { ...state, description: action.payload };
-    case "updateCollegeEndDateValidation":
-      return { ...state, description: action.payload };
-    case "updateCollegeDescriptionValidation":
-      return { ...state, description: action.payload };
+    case "updateAboutValidation":
+      return { ...state, about: action.payload };
+    case "updateExperienceValidation":
+      return {
+        ...state,
+        experiences: state.experiences.map((exp, i) =>
+          i === action.payload.index
+            ? { ...exp, ...action.payload.experience }
+            : exp
+        ),
+      };
+    case "updateEducationValidation":
+      return {
+        ...state,
+        education: state.education.map((exp, i) =>
+          i === action.payload.index
+            ? { ...exp, ...action.payload.education }
+            : exp
+        ),
+      };
+
     default:
       return state;
   }
@@ -117,12 +137,15 @@ const Forms = () => {
   const [formPart, setFormPart] = useState(1);
   const [showStartDate, setStartShowDate] = useState(false);
   const [showEndDate, setEndShowDate] = useState(false);
+  const [showEduEndDate, setShowEduEndDate] = useState(false);
+  const [expTouched, setExpTouched] = useState(false);
+  const [eduTouched, setEduTouched] = useState(false);
   const [selectData, setSelectData] = useState(options);
+
   const [validationState, dispatchValidation] = useReducer(
     validationReducer,
     initialValidationState
   );
-
   useEffect(() => {
     const fetchData = async () => {
       const response = await fetch(
@@ -134,8 +157,13 @@ const Forms = () => {
     fetchData();
   }, []);
 
+  // FIRST PAGE
+
+  // Validations
+
   const nameChangeHandler = (e) => {
     dispatch({ type: "updateName", payload: e.target.value });
+    localStorage.setItem("name", e.target.value);
 
     let isValid = true;
     if (e.target.value.length < 2) {
@@ -156,6 +184,7 @@ const Forms = () => {
 
   const surnameChangeHandler = (e) => {
     dispatch({ type: "updateSurname", payload: e.target.value });
+    localStorage.setItem("surname", e.target.value);
 
     let isValid = true;
     if (e.target.value.length < 2) {
@@ -176,15 +205,31 @@ const Forms = () => {
 
   const uploadChangeHandler = (e) => {
     e.preventDefault();
-    dispatch({
-      type: "updateUploading",
-      payload: URL.createObjectURL(e.target.files[0]),
-    });
+    let isValid = false;
+    if (formState.image) {
+      isValid = true;
+      dispatchValidation({
+        type: "updateImageValidation",
+        payload: { value: e.target.value, isValid },
+      });
+    }
+
+    const reader = new FileReader();
+
+    reader.readAsDataURL(e.target.files[0]);
+    reader.onload = () => {
+      localStorage.setItem("image", reader.result);
+
+      dispatch({
+        type: "updateUploading",
+        payload: URL.createObjectURL(e.target.files[0]),
+      });
+    };
   };
 
   const emailChangeHandler = (e) => {
     dispatch({ type: "updateEmail", payload: e.target.value });
-
+    localStorage.setItem("email", e.target.value);
     let isValid = true;
     if (e.target.value.length === 0) {
       isValid = false;
@@ -203,6 +248,7 @@ const Forms = () => {
 
   const mobileChangeHandler = (e) => {
     dispatch({ type: "updateMobile", payload: e.target.value });
+    localStorage.setItem("mobile", e.target.value);
 
     let isValid = true;
     if (e.target.value.length === 0) {
@@ -221,53 +267,61 @@ const Forms = () => {
 
   const aboutChangeHandler = (e) => {
     dispatch({ type: "updateAbout", payload: e.target.value });
+    localStorage.setItem("about", e.target.value);
   };
 
   const updateExperience = (index, experience) => ({
     type: "updateExperience",
     payload: { index, experience },
   });
+
   const updateEducation = (index, education) => ({
     type: "updateEducation",
     payload: { index, education },
   });
 
+  // SECOND PAGE
+
   const positionChangeHandler = (index) => (e) => {
+    localStorage.setItem("position", e.target.value);
     dispatch({
       type: "updateExperience",
       payload: { index, experience: { position: e.target.value } },
     });
 
+    if (e.target.value.length > 0) {
+      setExpTouched(true);
+    } else {
+      setExpTouched(false);
+    }
+
     let isValid = true;
     if (e.target.value.length < 2) {
       isValid = false;
     }
 
     dispatchValidation({
-      type: "updatePositionValidation",
-      payload: { value: e.target.value, isValid },
-    });
-  };
-  const collegeChangeHandler = (index) => (e) => {
-    dispatch({
-      type: "updateEducation",
-      payload: { index, education: { college: e.target.value } },
-    });
-    let isValid = true;
-    if (e.target.value.length < 2) {
-      isValid = false;
-    }
-
-    dispatchValidation({
-      type: "updateCollegeValidation",
-      payload: { value: e.target.value, isValid },
+      type: "updateExperienceValidation",
+      payload: {
+        index,
+        experience: {
+          position: { value: e.target.value, isValid },
+        },
+      },
     });
   };
 
   const employeerChangeHandler = (index) => (e) => {
+    localStorage.setItem("employer", e.target.value);
+    if (e.target.value.length > 0) {
+      setExpTouched(true);
+    } else {
+      setExpTouched(false);
+    }
+
     dispatch({
       type: "updateExperience",
-      payload: { index, experience: { employeer: e.target.value } },
+      payload: { index, experience: { employer: e.target.value } },
     });
 
     let isValid = true;
@@ -276,45 +330,51 @@ const Forms = () => {
     }
 
     dispatchValidation({
-      type: "updateEmployerValidation",
-      payload: { value: e.target.value, isValid },
-    });
-  };
-
-  const degreeChangeHandler = (index) => (e) => {
-    dispatch({
-      type: "updateEducation",
-      payload: { index, education: { degree: e.target.value } },
+      type: "updateExperienceValidation",
+      payload: {
+        index,
+        experience: {
+          employer: { value: e.target.value, isValid },
+        },
+      },
     });
   };
 
   const startDateChangeHandler = (index) => (e) => {
+    localStorage.setItem("startDate", e.target.value);
     dispatch(
       updateExperience(index, {
         ...formState.experiences[index],
-        startDate: e.target.value,
+        start_date: e.target.value,
       })
     );
     setStartShowDate(true);
-
     let isValid = true;
     if (e.target.value === "") {
       isValid = false;
     }
 
     dispatchValidation({
-      type: "updateStartDateValidation",
-      payload: { value: e.target.value, isValid },
+      type: "updateExperienceValidation",
+      payload: {
+        index,
+        experience: {
+          start_date: { value: e.target.value, isValid },
+        },
+      },
     });
   };
 
   const endDateChangeHandler = (index) => (e) => {
+    localStorage.setItem("endDate", e.target.value);
+
     dispatch(
       updateExperience(index, {
         ...formState.experiences[index],
-        endDate: e.target.value,
+        due_date: e.target.value,
       })
     );
+
     setEndShowDate(true);
 
     let isValid = true;
@@ -323,19 +383,51 @@ const Forms = () => {
     }
 
     dispatchValidation({
-      type: "updateEndDateValidation",
-      payload: { value: e.target.value, isValid },
+      type: "updateExperienceValidation",
+      payload: {
+        index,
+        experience: {
+          due_date: { value: e.target.value, isValid },
+        },
+      },
     });
   };
 
-  const uniEndDateChangeHandler = (index) => (e) => {
-    dispatch(
-      updateEducation(index, {
-        ...formState.education[index],
-        endDate: e.target.value,
-      })
-    );
-    // setEndShowDate(true);
+  const collegeChangeHandler = (index) => (e) => {
+    localStorage.setItem("institute", e.target.value);
+
+    if (e.target.value.length > 0) {
+      setEduTouched(true);
+    } else {
+      setEduTouched(false);
+    }
+    dispatch({
+      type: "updateEducation",
+      payload: { index, education: { institute: e.target.value } },
+    });
+
+    let isValid = true;
+    if (e.target.value.length < 2) {
+      isValid = false;
+    }
+
+    dispatchValidation({
+      type: "updateEducationValidation",
+      payload: {
+        index,
+        education: {
+          institute: { value: e.target.value, isValid },
+        },
+      },
+    });
+  };
+
+  const degreeChangeHandler = (index) => (e) => {
+    dispatch({
+      type: "updateEducation",
+      payload: { index, education: { degree_id: e.target.value } },
+    });
+    localStorage.setItem("degree", e.target.value);
 
     let isValid = true;
     if (e.target.value === "") {
@@ -343,34 +435,71 @@ const Forms = () => {
     }
 
     dispatchValidation({
-      type: "updateCollegeEndDate",
-      payload: { value: e.target.value, isValid },
+      type: "updateEducationValidation",
+      payload: {
+        index,
+        education: {
+          degree: { value: e.target.value, isValid },
+        },
+      },
+    });
+  };
+
+  const uniEndDateChangeHandler = (index) => (e) => {
+    localStorage.setItem("eduEndDate", e.target.value);
+    dispatch(
+      updateEducation(index, {
+        ...formState.educations[index],
+        due_date: e.target.value,
+      })
+    );
+    setShowEduEndDate(true);
+
+    let isValid = true;
+    if (e.target.value === "") {
+      isValid = false;
+    }
+
+    dispatchValidation({
+      type: "updateEducationValidation",
+      payload: {
+        index,
+        education: {
+          endCollegeDate: { value: e.target.value, isValid },
+        },
+      },
     });
   };
 
   const descriptionChangeHandler = (index) => (e) => {
+    localStorage.setItem("description", e.target.value);
     dispatch(
       updateExperience(index, {
         ...formState.experiences[index],
         description: e.target.value,
       })
     );
-
     let isValid = true;
     if (e.target.value === "") {
       isValid = false;
     }
 
     dispatchValidation({
-      type: "updateDescriptionValidation",
-      payload: { value: e.target.value, isValid },
+      type: "updateExperienceValidation",
+      payload: {
+        index,
+        experience: {
+          description: { value: e.target.value, isValid },
+        },
+      },
     });
   };
 
   const eduDescriptionChangeHandler = (index) => (e) => {
+    localStorage.setItem("eduDescription", e.target.value);
     dispatch(
       updateEducation(index, {
-        ...formState.education[index],
+        ...formState.educations[index],
         description: e.target.value,
       })
     );
@@ -381,8 +510,13 @@ const Forms = () => {
     }
 
     dispatchValidation({
-      type: "updateCollegeDescriptionValidation",
-      payload: { value: e.target.value, isValid },
+      type: "updateEducationValidation",
+      payload: {
+        index,
+        education: {
+          collegeDescription: { value: e.target.value, isValid },
+        },
+      },
     });
   };
 
@@ -418,17 +552,27 @@ const Forms = () => {
     });
   };
 
-  const submitHandler = (e) => {
-    e.preventDefault();
-    // console.log(formState);
+  const convertToFile = (url, name = "profile") => {
+    return fetch(url)
+      .then((res) => res.blob())
+      .then((blob) => new File([blob], name, { type: "image/jpeg" }));
+  };
 
+  const submitHandler = async (e) => {
+    e.preventDefault();
+    localStorage.clear();
+
+    const fileFromURL = await convertToFile(formState.image);
+    const payload = { ...formState, image: fileFromURL };
+    console.log("image", fileFromURL);
+    console.log("payload", payload);
     fetch("https://resume.redberryinternship.ge/api/cvs", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
+        "Content-Type": "multipart/form-data",
       },
-      body: JSON.stringify(formState),
+      body: JSON.stringify(payload),
+      mode: "no-cors"
     })
       .then((response) => response.json())
       .then((data) => {
@@ -460,6 +604,15 @@ const Forms = () => {
             <p className={classes.underlined}></p>
           </Fragment>
         )}
+        {formPart === 3 && (
+          <Fragment>
+            <div className={classes.header}>
+              <p className={classes.page_name}>განათლება</p>
+              <p className={classes.pagination}>3/3</p>
+            </div>
+            <p className={classes.underlined}></p>
+          </Fragment>
+        )}
         <form onSubmit={submitHandler}>
           {formPart === 1 && (
             <Fragment>
@@ -471,14 +624,14 @@ const Forms = () => {
                     required
                     placeholder="სახელი"
                     id="name"
-                    value={formState.name}
+                    value={formState.name || localStorage.getItem("name")}
                     onChange={nameChangeHandler}
                     styling={
-                      validationState.name.isValid === true
+                      validationState.name.isValid === null
+                        ? ""
+                        : validationState.name.isValid
                         ? "valid"
-                        : validationState.name.isValid === false
-                        ? "invalid"
-                        : ""
+                        : "invalid"
                     }
                   />
                   <span>მინიმუმ 2 ასო, ქართული ასოები</span>
@@ -489,16 +642,17 @@ const Forms = () => {
                     label="გვარი"
                     placeholder="გვარი"
                     id="surname"
-                    value={formState.surname}
+                    value={formState.surname || localStorage.getItem("surname")}
                     onChange={surnameChangeHandler}
                     styling={
-                      validationState.surname.isValid === true
+                      validationState.surname.isValid === null
+                        ? ""
+                        : validationState.surname.isValid
                         ? "valid"
-                        : validationState.surname.isValid === false
-                        ? "invalid"
-                        : ""
+                        : "invalid"
                     }
                   />
+
                   <span>მინიმუმ 2 ასო, ქართული ასოები</span>
                 </div>
               </div>
@@ -509,6 +663,13 @@ const Forms = () => {
                   type="file"
                   id="uploading"
                   onChange={uploadChangeHandler}
+                  styling={
+                    validationState.image.isValid === null
+                      ? ""
+                      : validationState.image.isValid
+                      ? "valid"
+                      : "invalid"
+                  }
                 />
               </div>
               <div className={classes.about_container}>
@@ -516,7 +677,7 @@ const Forms = () => {
                   label="ჩემს შესახებ (არასავალდებულო)"
                   id="about-me"
                   placeholder="ზოგადი ინფორმაცია შენს შესახებ"
-                  value={formState.about}
+                  value={formState.about || localStorage.getItem("about")}
                   onChange={aboutChangeHandler}
                 />
               </div>
@@ -526,14 +687,14 @@ const Forms = () => {
                   type="text"
                   placeholder="მაგ: namesurname@redberry.ge"
                   id="email"
-                  value={formState.email}
+                  value={formState.email || localStorage.getItem("email")}
                   onChange={emailChangeHandler}
                   styling={
-                    validationState.email.isValid === true
+                    validationState.email.isValid === null
+                      ? ""
+                      : validationState.email.isValid
                       ? "valid"
-                      : validationState.email.isValid === false
-                      ? "invalid"
-                      : ""
+                      : "invalid"
                   }
                 />
                 <span>უნდა მთავრდებოდეს @redberry.ge-ით</span>
@@ -544,14 +705,14 @@ const Forms = () => {
                   type="text"
                   placeholder="მაგ: +995 551 12 34 56"
                   id="mobile"
-                  value={formState.mobile}
+                  value={formState.mobile || localStorage.getItem("mobile")}
                   onChange={mobileChangeHandler}
                   styling={
-                    validationState.mobile.isValid === true
+                    validationState.mobile.isValid === null
+                      ? ""
+                      : validationState.mobile.isValid
                       ? "valid"
-                      : validationState.mobile.isValid === false
-                      ? "invalid"
-                      : ""
+                      : "invalid"
                   }
                 />
                 <span>უნდა აკმაყოფილებდეს ქართული მობილური ნომრის ფორმატს</span>
@@ -568,14 +729,17 @@ const Forms = () => {
                     type="text"
                     placeholder="დეველოპერი, დიზაინერი, ა.შ."
                     id="position"
-                    value={experience.position}
+                    value={
+                      experience.position || localStorage.getItem("position")
+                    }
                     onChange={positionChangeHandler(index)}
                     styling={
-                      validationState.position.isValid === true
+                      validationState.experiences[index].position.isValid ===
+                      null
+                        ? ""
+                        : validationState.experiences[index].position.isValid
                         ? "valid"
-                        : validationState.position.isValid === false
-                        ? "invalid"
-                        : ""
+                        : "invalid"
                     }
                   />
                   <span>მინიმუმ 2 სიმბოლო</span>
@@ -586,14 +750,17 @@ const Forms = () => {
                     type="text"
                     placeholder="დამსაქმებელი"
                     id="employeer"
-                    value={experience.employeer}
+                    value={
+                      experience.employer || localStorage.getItem("employer")
+                    }
                     onChange={employeerChangeHandler(index)}
                     styling={
-                      validationState.employer.isValid === true
+                      validationState.experiences[index].employer.isValid ===
+                      null
+                        ? ""
+                        : validationState.experiences[index].employer.isValid
                         ? "valid"
-                        : validationState.employer.isValid === false
-                        ? "invalid"
-                        : ""
+                        : "invalid"
                     }
                   />
                   <span>მინიმუმ 2 სიმბოლო</span>
@@ -604,13 +771,18 @@ const Forms = () => {
                       label="დაწყების რიცხვი"
                       type="date"
                       onChange={startDateChangeHandler(index)}
-                      value={experience.startDate}
+                      value={
+                        experience.startDate ||
+                        localStorage.getItem("startDate")
+                      }
                       styling={
-                        validationState.startDate.isValid === true
+                        validationState.experiences[index].start_date
+                          .isValid === null
+                          ? ""
+                          : validationState.experiences[index].start_date
+                              .isValid
                           ? "valid"
-                          : validationState.startDate.isValid === false
-                          ? "invalid"
-                          : ""
+                          : "invalid"
                       }
                     />
                   </div>
@@ -619,13 +791,16 @@ const Forms = () => {
                       label="დამთავრების რიცხვი"
                       type="date"
                       onChange={endDateChangeHandler(index)}
-                      value={experience.endDate}
+                      value={
+                        experience.endDate || localStorage.getItem("endDate")
+                      }
                       styling={
-                        validationState.endDate.isValid === true
+                        validationState.experiences[index].due_date.isValid ===
+                        null
+                          ? ""
+                          : validationState.experiences[index].due_date.isValid
                           ? "valid"
-                          : validationState.endDate.isValid === false
-                          ? "invalid"
-                          : ""
+                          : "invalid"
                       }
                     />
                   </div>
@@ -635,21 +810,25 @@ const Forms = () => {
                     label="აღწერა"
                     id="description"
                     placeholder="როლი თანამდებობაზე და ზოგადი აღწერა"
-                    value={experience.description}
+                    value={
+                      experience.description ||
+                      localStorage.getItem("description")
+                    }
                     onChange={descriptionChangeHandler(index)}
                     styling={
-                      validationState.description.isValid === true
+                      validationState.experiences[index].description.isValid ===
+                      null
+                        ? ""
+                        : validationState.experiences[index].description.isValid
                         ? "valid"
-                        : validationState.description.isValid === false
-                        ? "invalid"
-                        : ""
+                        : "invalid"
                     }
                   />
                 </div>
               </Fragment>
             ))}
           {formPart === 3 &&
-            formState.education.map((education, index) => (
+            formState.educations.map((education, index) => (
               <Fragment key={index}>
                 <div className={classes.position}>
                   <FormInput
@@ -657,27 +836,41 @@ const Forms = () => {
                     type="text"
                     placeholder="სასწავლებელი"
                     id="college"
-                    value={education.college}
+                    value={
+                      education.institute || localStorage.getItem("institute")
+                    }
                     onChange={collegeChangeHandler(index)}
                     styling={
-                      validationState.isValid === true
+                      validationState.education[index].institute.isValid ===
+                      null
+                        ? ""
+                        : validationState.education[index].institute.isValid
                         ? "valid"
-                        : validationState.college.isValid === false
-                        ? "invalid"
-                        : ""
+                        : "invalid"
                     }
                   />
                   <span>მინიმუმ 2 სიმბოლო</span>
                 </div>
                 <div className={classes.date}>
                   <div>
-                    <label>ხარისხი</label>
+                    <label
+                      className={`${classes.label} ${
+                        validationState.education[index].degree.isValid === true
+                          ? classes.valid
+                          : validationState.education[index].degree.isValid ===
+                            false
+                          ? classes.invalid
+                          : ""
+                      }`}
+                    >
+                      ხარისხი
+                    </label>
                     <select
-                      value={education.degree}
+                      value={education.degree || localStorage.getItem("degree")}
                       onChange={degreeChangeHandler(index)}
                     >
                       {selectData.map((option) => (
-                        <option key={option.id} value={option.title}>
+                        <option key={option.id} value={option.id}>
                           {option.title}
                         </option>
                       ))}
@@ -688,13 +881,17 @@ const Forms = () => {
                       label="დამთავრების რიცხვი"
                       type="date"
                       onChange={uniEndDateChangeHandler(index)}
-                      value={education.endDate}
+                      value={
+                        education.endDate || localStorage.getItem("eduEndDate")
+                      }
                       styling={
-                        validationState.endCollegeDate.isValid === true
+                        validationState.education[index].endCollegeDate
+                          .isValid === null
+                          ? ""
+                          : validationState.education[index].endCollegeDate
+                              .isValid
                           ? "valid"
-                          : validationState.endCollegeDate.isValid === false
-                          ? "invalid"
-                          : ""
+                          : "invalid"
                       }
                     />
                   </div>
@@ -707,11 +904,13 @@ const Forms = () => {
                     value={education.description}
                     onChange={eduDescriptionChangeHandler(index)}
                     styling={
-                      validationState.collegeDescription.isValid === true
+                      validationState.education[index].collegeDescription
+                        .isValid === null
+                        ? ""
+                        : validationState.education[index].collegeDescription
+                            .isValid
                         ? "valid"
-                        : validationState.collegeDescription.isValid === false
-                        ? "invalid"
-                        : ""
+                        : "invalid"
                     }
                   />
                 </div>
@@ -731,22 +930,26 @@ const Forms = () => {
           )}
 
           {formPart === 2 && (
-            <Button
-              buttonType="button"
-              styling="add"
-              onClickHanlder={addExperienceHandler}
-            >
-              მეტი გამოცდილების დამატება
-            </Button>
+            <div className={classes.addButton_container}>
+              <Button
+                buttonType="button"
+                styling="add"
+                onClickHanlder={addExperienceHandler}
+              >
+                მეტი გამოცდილების დამატება
+              </Button>
+            </div>
           )}
           {formPart === 3 && (
-            <Button
-              buttonType="button"
-              styling="add"
-              onClickHanlder={addEducationHandler}
-            >
-              სხვა სასწავლებლის დამატება
-            </Button>
+            <div className={classes.addButton_container}>
+              <Button
+                buttonType="button"
+                styling="add"
+                onClickHanlder={addEducationHandler}
+              >
+                სხვა სასწავლებლის დამატება
+              </Button>
+            </div>
           )}
           {formPart === 2 && (
             <div className={classes.button_container}>
@@ -795,6 +998,9 @@ const Forms = () => {
           formState={formState}
           showStartDate={showStartDate}
           showEndDate={showEndDate}
+          showEduEndDate={showEduEndDate}
+          expTouched={expTouched}
+          eduTouched={eduTouched}
         />
       </div>
     </main>

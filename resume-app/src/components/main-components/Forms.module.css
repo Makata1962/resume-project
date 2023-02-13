@@ -51,12 +51,14 @@ span {
 .date {
   display: flex;
   justify-content: space-between;
+  margin-bottom: 58px;
 }
 
 .uploading_container {
   display: flex;
   justify-content: flex-start;
   align-items: center;
+  margin-bottom: 55px;
 }
 
 .uploading_container p {
@@ -81,6 +83,10 @@ span {
   margin-top: 10px;
 }
 
+.about_container {
+  margin-bottom: 33px;
+}
+
 .email input,
 .number input,
 .position input,
@@ -90,9 +96,23 @@ span {
   border: 1px solid #bcbcbc;
   border-radius: 4px;
 }
+.email,
+.number,
+.position,
+.employeer {
+  margin-bottom: 29px;
+}
 
 .number {
-  margin-bottom: 189px;
+  margin-bottom: 110px;
+}
+
+.description_container {
+  margin-bottom: 40px;
+}
+
+.addButton_container {
+  margin-bottom: 170px;
 }
 
 .button_container {
@@ -107,4 +127,24 @@ span {
 
 .resume_container {
   width: 822px;
+}
+
+.error {
+  color: red;
+}
+
+.label {
+  font-weight: bold;
+}
+.valid {
+  color: green;
+}
+
+.invalid {
+  color: red;
+}
+
+
+select {
+  margin-right: 50px;
 }

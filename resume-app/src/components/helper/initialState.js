@@ -1,16 +1,14 @@
 export const initialExperience = {
   position: "",
-  employeer: "",
-  startDate: new Date().toISOString(),
-  endDate: new Date().toISOString(),
+  employer: "",
+  start_date: new Date().toISOString(),
+  due_date: new Date().toISOString(),
   description: "",
 };
 
 export const initialEducation = {
-  college: "",
-  degree: "",
-  endDate: new Date().toISOString(),
+  institute: "",
+  degree_id: null,
+  due_date: new Date().toISOString(),
   description: "",
 };
-
-

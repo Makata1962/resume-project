@@ -1,6 +1,15 @@
 import classes from "./Resume.module.css";
 const Resume = (props) => {
-  const { formState, showStartDate, showEndDate } = props;
+  const {
+    formState,
+    showStartDate,
+    showEndDate,
+    expTouched,
+    eduTouched,
+    showEduEndDate,
+  } = props;
+
+  console.log(formState.educations);
 
   return (
     <main className={classes.main_container}>
@@ -10,32 +19,32 @@ const Resume = (props) => {
             className={classes.fullname}
           >{`${formState.name} ${formState.surname}`}</h1>
           <p className={classes.email}>{formState.email}</p>
-          <p className={classes.mobile}>{formState.mobile}</p>
-          {formState.about && (
+          <p className={classes.mobile}>{formState.phone_number}</p>
+          {formState.about_me && (
             <h1 className={classes.about_header}>ჩემს შესახებ</h1>
           )}
-          <p className={classes.about_section}>{formState.about}</p>
+          <p className={classes.about_section}>{formState.about_me}</p>
         </div>
         <div className={classes.right_container}>
-          {formState.uploading && (
-            <img src={formState.uploading} alt="resume img of job seeker" />
+          {formState.image && (
+            <img src={formState.image} alt="resume img of job seeker" />
           )}
         </div>
       </div>
       {formState.experiences.map((experience, index) => (
         <div key={index} className={classes.experience_container}>
-          {formState.experiences && (
+          {expTouched && (
             <h1 className={classes.experience_header}>გამოცდილება</h1>
           )}
           {experience.position && (
             <p className={classes.experience_section}>
-              {experience.position}, {experience.employeer}
+              {experience.position}, {experience.employer}
             </p>
           )}
           <div className={classes.date_section}>
             {showStartDate && showEndDate && (
               <p>
-                {experience.startDate} - {experience.endDate}
+                {experience.start_date} - {experience.due_date}
               </p>
             )}
           </div>
@@ -44,19 +53,28 @@ const Resume = (props) => {
           </div>
         </div>
       ))}
-      {formState.education.map((education, index) => (
+      {formState.educations.map((education, index) => (
         <div key={index} className={classes.experience_container}>
-          {formState.experiences && (
+          {eduTouched && (
             <h1 className={classes.experience_header}>განათლება</h1>
           )}
 
-          {education.college && (
+          {education.institute && (
             <p className={classes.experience_section}>
-              {education.college}, {education.degree}
+              {education.institute},
+              {education.degree_id === "1" && " საშუალო სკოლის დიპლომი"}
+              {education.degree_id === "2" && " ზოგადსაგანმანათლებლო დიპლომი"}
+              {education.degree_id === "3" && " ბაკალავრი"}
+              {education.degree_id === "4" && " მაგისტრი"}
+              {education.degree_id === "5" && " დოქტორი"}
+              {education.degree_id === "6" && " ასოცირებული ხარისხი"}
+              {education.degree_id === "7" && " სტუდენტი"}
+              {education.degree_id === "8" && " კოლეჯი(ხარისიხს გარეშე)"}
+              {education.degree_id === "9" && " სხვა"}
             </p>
           )}
           <div className={classes.date_section}>
-            <p>{education.endDate}</p>
+            {showEduEndDate && <p>{education.due_date}</p>}
           </div>
 
           <div className={classes.description_section}>

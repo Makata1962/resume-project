@@ -67,6 +67,8 @@
   width: 246px;
   height: 246px;
   border-radius: 133px;
+  object-fit: cover;
+
 }
 
 .date_section p {

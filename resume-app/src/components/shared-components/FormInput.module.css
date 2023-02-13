@@ -1,9 +1,12 @@
+/*  */
+
 .label {
   font-weight: bold;
   margin-bottom: 8px;
 }
 
-.input {
+.input,
+select {
   font-style: normal;
   font-weight: 400;
   font-size: 16px;
@@ -14,6 +17,8 @@
   height: 48px;
   border-radius: 4px;
   float: left;
+  margin-top: 8px;
+  margin-bottom: 8px;
 }
 
 input[type="file"] {
@@ -28,6 +33,7 @@ input[type="file"] {
   left: 0;
   opacity: 0;
 }
+
 
 .input.valid {
   border: 2px solid green;
