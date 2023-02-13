@@ -162,13 +162,6 @@ const Forms = () => {
     fetchData();
   }, []);
 
-  useEffect(() => {
-    console.log(validationState.experiences, "VALIDATION EXPERIENCE ARRAY");
-    console.log(validationState.education, "VALIDATION EDUCAT ARRAY");
-  }, [validationState]);
-
-  // FIRST PAGE
-
   // Validations
 
   const nameChangeHandler = (e) => {
