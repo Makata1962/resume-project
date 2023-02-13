@@ -4,7 +4,12 @@ import Button from "../shared-components/Button";
 import FormInput from "../shared-components/FormInput";
 import FormTextArea from "../shared-components/FormTextArea";
 import { Fragment, useReducer, useState, useEffect } from "react";
-import { initialExperience, initialEducation } from "../helper/initialState";
+import {
+  initialExperience,
+  initialEducation,
+  initialValidationExperience,
+  initialValidationEducation,
+} from "../helper/initialState";
 import axios from "axios";
 import { convertToFile } from "../helper/helperFunctions";
 
@@ -17,6 +22,17 @@ const initialState = {
   educations: [initialEducation],
   image: null,
   about_me: "",
+};
+
+const initialValidationState = {
+  name: { value: "", isValid: null },
+  surname: { value: "", isValid: null },
+  image: { value: null, isValid: null },
+  email: { value: "", isValid: null },
+  mobile: { value: "", isValid: null },
+  about: { value: "", isValid: null },
+  experiences: [initialValidationExperience],
+  education: [initialValidationEducation],
 };
 
 const formReducer = (state, action) => {
@@ -68,32 +84,6 @@ const formReducer = (state, action) => {
   }
 };
 
-const initialValidationState = {
-  name: { value: "", isValid: null },
-  surname: { value: "", isValid: null },
-  image: { value: null, isValid: null },
-  email: { value: "", isValid: null },
-  mobile: { value: "", isValid: null },
-  about: { value: "", isValid: null },
-  experiences: [
-    {
-      position: { value: "", isValid: null },
-      employer: { value: "", isValid: null },
-      start_date: { value: "", isValid: null },
-      due_date: { value: "", isValid: null },
-      description: { value: "", isValid: null },
-    },
-  ],
-  education: [
-    {
-      institute: { value: "", isValid: null },
-      endCollegeDate: { value: "", isValid: null },
-      collegeDescription: { value: "", isValid: null },
-      degree: { value: "", isValid: null },
-    },
-  ],
-};
-
 const validationReducer = (state, action) => {
   switch (action.type) {
     case "updateNameValidation":
@@ -125,6 +115,19 @@ const validationReducer = (state, action) => {
             ? { ...exp, ...action.payload.education }
             : exp
         ),
+      };
+    case "addExperienceValidation":
+      console.log("addExperienceVAlidation is triggered");
+      return {
+        ...state,
+        experiences: [...state.experiences, action.payload],
+      };
+    case "addEducationValidation":
+      console.log("addEDUCATION in reducer is triggered");
+
+      return {
+        ...state,
+        education: [...state.education, action.payload],
       };
 
     default:
@@ -158,6 +161,11 @@ const Forms = () => {
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+    console.log(validationState.experiences, "VALIDATION EXPERIENCE ARRAY");
+    console.log(validationState.education, "VALIDATION EDUCAT ARRAY");
+  }, [validationState]);
 
   // FIRST PAGE
 
@@ -523,18 +531,31 @@ const Forms = () => {
   };
 
   const addExperienceHandler = () => {
+    console.log("ADD EXPERIENCE WAS CLICKED");
+
     dispatch({
       type: "addExperience",
       payload: initialExperience,
     });
 
+    dispatchValidation({
+      type: "addExperienceValidation",
+      payload: initialValidationExperience,
+    });
+
     // setStartShowDate(false);
     // setEndShowDate(false);
   };
+
   const addEducationHandler = () => {
     dispatch({
       type: "addEducation",
       payload: initialEducation,
+    });
+
+    dispatchValidation({
+      type: "addEducationValidation",
+      payload: initialValidationEducation,
     });
 
     // setStartShowDate(false);
@@ -563,8 +584,6 @@ const Forms = () => {
 
     const fileFromURL = await convertToFile(formState.image);
     const payload = { ...formState, image: fileFromURL };
-    console.log("image", fileFromURL);
-    console.log("payload", payload);
     axios
       .post("https://resume.redberryinternship.ge/api/cvs", payload, {
         headers: {
@@ -572,7 +591,7 @@ const Forms = () => {
         },
       })
       .then((response) => {
-        console.log(response.data);
+        console.log(response.ok);
       })
       .catch((error) => {
         console.error(error);
@@ -864,6 +883,14 @@ const Forms = () => {
                     <select
                       value={education.degree || localStorage.getItem("degree")}
                       onChange={degreeChangeHandler(index)}
+                      className={`${classes.label} ${
+                        validationState.education[index].degree.isValid === true
+                          ? classes.selectValid
+                          : validationState.education[index].degree.isValid ===
+                            false
+                          ? classes.selectInvalid
+                          : ""
+                      }`}
                     >
                       {selectData.map((option) => (
                         <option key={option.id} value={option.id}>

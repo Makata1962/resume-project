@@ -145,6 +145,13 @@ span {
 }
 
 
+.selectValid {
+  border: 2px solid green
+}
+.selectInvalid {
+  border: 2px solid red
+}
+
 select {
   margin-right: 50px;
 }

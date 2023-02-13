@@ -9,8 +9,6 @@ const Resume = (props) => {
     showEduEndDate,
   } = props;
 
-  console.log(formState.educations);
-
   return (
     <main className={classes.main_container}>
       <div className={classes.personal_container}>
